@@ -74,20 +74,30 @@ class Board extends Component {
         board[y][x] = !board[y][x];
       }
     }
+    //Flip initial cell
+    flipCell(y, x);
+    flipCell(y, x - 1);
+    flipCell(y, x + 1);
+    flipCell(y - 1, x);
+    flipCell(y + 1, x);
+
 
     // TODO: flip this cell and the cells around it
 
     // win when every cell is turned off
     // TODO: determine is the game has been won
+    let hasWon = board.every(row => row.every(cell => !cell));
 
-    // this.setState({ board, hasWon });
+    this.setState({ board, hasWon });
   }
 
 
   /** Render game board or winning message. */
 
   render() {
-
+    if (this.state.hasWon) {
+      return <h1>You Won!</h1>
+    }
     // if the game is won, just show a winning msg & render nothing else
 
     // TODO
@@ -99,16 +109,27 @@ class Board extends Component {
     for (let y = 0; y < this.props.nrows; y++) {
       let row = [];
       for (let x = 0; x < this.props.ncols; x++) {
-        row.push(<Cell isLit={this.state.board[y][x]} />)
+        let coord = `${y}-${x}`;
+        row.push(
+          <Cell
+            key={coord}
+            isLit={this.state.board[y][x]}
+            flipCellsAroundMe={() => this.flipCellsAround(coord)}
+          />
+        )
       }
-      tableBoard.push(<tr>{row}</tr>);
+      tableBoard.push(<tr key={y}>{row}</tr>);
     }
     return (
-      <table className="Board">
-        <tbody>
-          {tableBoard}
-        </tbody>
-      </table>
+      <div>
+        <div className="neon-orange">Lights</div>
+        <div className="neon-blue">Out!</div>
+        <table className="Board">
+          <tbody>
+            {tableBoard}
+          </tbody>
+        </table>
+      </div>
     )
   }
 }
